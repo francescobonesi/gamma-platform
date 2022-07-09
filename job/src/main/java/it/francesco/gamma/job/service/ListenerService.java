@@ -42,7 +42,10 @@ public class ListenerService {
             return new JobResponse(clientResponse);
         } catch (JobApiException ex) {
             log.info("Api call failed for jobRequest={}, responseCode={}", jobRequest, ex.getApiResponseCode());
-            return null;
+            JobResponse response = new JobResponse();
+            response.setIdentifier(jobRequest.getIdentifier());
+            response.setSuccess(false);
+            return response;
         }
     }
 

@@ -6,3 +6,5 @@ job:
   client:
     url: "http://localhost:9091"
     path: "/firma"
+
+server.port: 9092

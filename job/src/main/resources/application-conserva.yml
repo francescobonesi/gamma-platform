@@ -6,3 +6,5 @@ job:
   client:
     url: "http://localhost:9091"
     path: "/conservazione"
+
+server.port: 9091

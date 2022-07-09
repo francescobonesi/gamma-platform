@@ -7,5 +7,5 @@ import lombok.ToString;
 @ToString
 public class ClientResponse {
     private String identifier;
-    private boolean completed;
+    private boolean success;
 }
