@@ -1,4 +1,4 @@
-.PHONY: compile build-job-image build-api-async-image build run configure clean
+.PHONY: compile build-job-image build-api-async-image build-api-pec-image build run configure clean
 
 java_home ?= ~/.sdkman/candidates/java/17.0.2-zulu/
 
@@ -11,7 +11,10 @@ build-job-image:
 build-api-async-image:
 	cd api-async && docker build -t francesco/api-async .
 
-build: compile build-job-image build-api-async-image
+build-api-pec-image:
+	cd pec-api && docker build -t francesco/pec-api .
+
+build: compile build-job-image build-api-async-image build-api-pec-image
 
 init:
 	docker-compose up -d --remove-orphans
@@ -25,6 +28,7 @@ configure:
 run:
 	docker run --network=host -e SPRING_PROFILES_ACTIVE=firma francesco/job \
 & docker run --network=host -e SPRING_PROFILES_ACTIVE=conserva francesco/job \
+& docker run --network=host francesco/pec-api \
 & docker run --network=host -e SPRING_PROFILES_ACTIVE=firma francesco/api-async \
 & docker run --network=host -e SPRING_PROFILES_ACTIVE=conserva francesco/api-async
 

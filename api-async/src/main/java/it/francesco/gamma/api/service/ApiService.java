@@ -57,20 +57,20 @@ public class ApiService {
 
     }
 
-    private void sendToQueue(String identifier, ApiAsyncRequest request) {
+    private void sendToQueue(String identifier, ApiAsyncRequest request, String serviceToken) {
         JobRequest jobRequest = new JobRequest(
                 identifier,
                 request.getTenant(),
                 request.getUsername(),
                 request.getDocumentIdList(),
-                request.getServiceAuthorizationToken()
+                serviceToken
         );
         log.info("Sending message in queue: {}", jobRequest);
         rabbitTemplate.convertAndSend(sendQueue, jobRequest);
     }
 
 
-    public String request(ApiAsyncRequest request) {
+    public String request(ApiAsyncRequest request, String serviceToken) {
 
         String identifier = generateIdentifier(request);
         Optional<DbRequest> requestById = requestRepository.findById(identifier);
@@ -79,7 +79,7 @@ public class ApiService {
             log.info("Object already exists, will be found when calling the search endpoint");
         } else {
             saveToDb(identifier, request);
-            sendToQueue(identifier, request);
+            sendToQueue(identifier, request, serviceToken);
         }
         return identifier;
 

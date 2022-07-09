@@ -1,5 +1,5 @@
 rootProject.name = 'gamma'
-//include 'synthesia-api'
 include 'job'
 include 'api-async'
+include 'pec-api'
 

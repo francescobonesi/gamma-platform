@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: "gamma-pec-api"
+
+springdoc:
+  api-docs:
+    path: /swagger
+
+server.port: 8080
+
+pec.url: "http://localhost:8888"
+
+feign:
+  client:
+    config:
+      pec:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+        decode404: false
+  hystrix:
+    enabled: false

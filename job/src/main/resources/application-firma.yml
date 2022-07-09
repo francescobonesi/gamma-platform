@@ -4,7 +4,7 @@ queue:
 
 job:
   client:
-    url: "http://localhost:9091"
+    url: "http://localhost:8888"
     path: "/firma"
 
 server.port: 9092

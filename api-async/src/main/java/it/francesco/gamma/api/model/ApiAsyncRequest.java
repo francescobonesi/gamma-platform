@@ -16,6 +16,5 @@ public class ApiAsyncRequest {
     private String tenant;
     private String username;
     private List<String> documentIdList;
-    private String serviceAuthorizationToken;
 
 }

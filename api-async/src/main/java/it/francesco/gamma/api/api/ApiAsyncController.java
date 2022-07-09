@@ -47,8 +47,10 @@ public class ApiAsyncController {
 
 
     @PostMapping("/request")
-    public ResponseEntity<Map<String, String>> request(@RequestBody ApiAsyncRequest request) {
-        String identifier = apiService.request(request);
+    public ResponseEntity<Map<String, String>> request(
+            @RequestHeader("X-serviceToken") String serviceToken,
+            @RequestBody ApiAsyncRequest request) {
+        String identifier = apiService.request(request, serviceToken);
         return ResponseEntity.ok().body(Collections.singletonMap("identifier", identifier));
     }
 
