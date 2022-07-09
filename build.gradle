@@ -1,0 +1,19 @@
+
+group 'it.francesco.gamma'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+subprojects {
+
+    apply plugin: 'java'
+
+    test {
+        dependsOn cleanTest
+        testLogging.showStandardStreams = true
+    }
+
+}
+

@@ -1,0 +1,8 @@
+queue:
+  request: "firma-request"
+  response: "firma-response"
+
+job:
+  client:
+    url: "http://localhost:9091"
+    path: "/firma"

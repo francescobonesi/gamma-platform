@@ -1,0 +1,8 @@
+queue:
+  request: "conservazione-request"
+  response: "conservazione-response"
+
+job:
+  client:
+    url: "http://localhost:9091"
+    path: "/conservazione"

@@ -1,0 +1,4 @@
+rootProject.name = 'gamma'
+//include 'synthesia-api'
+include 'job'
+

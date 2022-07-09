@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: "gamma-job-${spring.profiles.active}"
+  rabbitmq:
+    host: localhost
+
+server.port: 9090
+
+job:
+  concurrent:
+    consumers: 10
+    maxConsumers: 20
+  prefetch: 10
+
+feign:
+  client:
+    config:
+      jobclient:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+        decode404: false
+  hystrix:
+    enabled: false
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: SEMAPHORE
