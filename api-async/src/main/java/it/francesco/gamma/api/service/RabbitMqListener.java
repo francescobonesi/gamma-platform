@@ -15,25 +15,24 @@ import java.util.Optional;
 @Slf4j
 public class RabbitMqListener {
 
-    public final RequestRepository requestRepository;
+    public final ApiService service;
 
     @Autowired
-    public RabbitMqListener(RequestRepository requestRepository) {
-        this.requestRepository = requestRepository;
+    public RabbitMqListener(ApiService service) {
+        this.service = service;
     }
 
-    @RabbitListener(queues = "${queue.responses}")
-    public void signaturesListener(JobResponse response) {
-        log.info("Message received from job: {}", response);
+    @RabbitListener(queues = "${queue.firma.responses}")
+    public void firmaListener(JobResponse response) {
+        log.info("Message received from firma job: {}", response);
+        service.firmaCompleted(response);
+    }
 
-        Optional<DbRequest> requestById = requestRepository.findById(response.getIdentifier());
 
-        if (requestById.isEmpty()) return;
-
-        DbRequest request = requestById.get();
-        request.setStatus(response.isSuccess() ? RequestStatus.COMPLETED : RequestStatus.FAILED);
-        requestRepository.save(request);
-
+    @RabbitListener(queues = "${queue.conservazione.responses}")
+    public void conservazioneListener(JobResponse response) {
+        log.info("Message received from conservazione job: {}", response);
+        service.conservazioneCompleted(response);
     }
 
 }

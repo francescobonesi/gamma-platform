@@ -29,8 +29,7 @@ run:
 	docker run --network=host -e SPRING_PROFILES_ACTIVE=firma francesco/job \
 & docker run --network=host -e SPRING_PROFILES_ACTIVE=conserva francesco/job \
 & docker run --network=host francesco/pec-api \
-& docker run --network=host -e SPRING_PROFILES_ACTIVE=firma francesco/api-async \
-& docker run --network=host -e SPRING_PROFILES_ACTIVE=conserva francesco/api-async
+& docker run --network=host francesco/api-async
 
 clean:
 	docker-compose down --remove-orphans

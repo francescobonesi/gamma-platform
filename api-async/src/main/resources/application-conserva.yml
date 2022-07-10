@@ -1,5 +1,0 @@
-queue:
-  requests: "conservazione-request"
-  responses: "conservazione-response"
-
-server.port: 8081

@@ -2,6 +2,9 @@ package it.francesco.gamma.api.model;
 
 public enum RequestStatus {
 
-    IN_PROGRESS, COMPLETED, FAILED;
+    FIRMA_IN_PROGRESS,
+    CONSERVAZIONE_IN_PROGRESS,
+    COMPLETED,
+    FAILED;
 
 }

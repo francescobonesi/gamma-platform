@@ -1,10 +1,10 @@
 spring:
   application:
-    name: "gamma-async-api-${spring.profiles.active}"
+    name: "gamma-async-api"
   rabbitmq:
     host: localhost
   datasource:
-    url: "jdbc:mariadb://localhost:3306/requests-${spring.profiles.active}?createDatabaseIfNotExist=true"
+    url: "jdbc:mariadb://localhost:3306/requests?createDatabaseIfNotExist=true"
     username: root
     password: funnystory
     driver-class-name: org.mariadb.jdbc.Driver
@@ -16,6 +16,16 @@ spring:
     hibernate:
       ddl-auto: update
 
+server.port: 8081
+
 springdoc:
   api-docs:
     path: /swagger
+
+queue:
+  conservazione:
+    requests: "conservazione-request"
+    responses: "conservazione-response"
+  firma:
+    requests: "firma-request"
+    responses: "firma-response"

@@ -47,11 +47,12 @@ public class ApiAsyncController {
 
 
     @PostMapping("/request")
-    public ResponseEntity<Map<String, String>> request(
-            @RequestHeader("X-serviceToken") String serviceToken,
+    public ResponseEntity<ApiAsyncResponse> request(
+            @RequestHeader("X-conservazioneServiceToken") String conservazioneServiceToken,
+            @RequestHeader("X-firmaServiceToken") String firmaServiceToken,
             @RequestBody ApiAsyncRequest request) {
-        String identifier = apiService.request(request, serviceToken);
-        return ResponseEntity.ok().body(Collections.singletonMap("identifier", identifier));
+        ApiAsyncResponse response = apiService.request(request, firmaServiceToken, conservazioneServiceToken);
+        return ResponseEntity.ok().body(response);
     }
 
 }

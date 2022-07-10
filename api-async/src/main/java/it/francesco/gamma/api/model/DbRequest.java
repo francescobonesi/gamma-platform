@@ -21,5 +21,7 @@ public class DbRequest {
     private String tenant;
     private String username;
     private String documentIdList;
+    private String firmaServiceToken;
+    private String conservazioneServiceToken;
 
 }

@@ -1,5 +1,0 @@
-queue:
-  requests: "firma-request"
-  responses: "firma-response"
-
-server.port: 8082

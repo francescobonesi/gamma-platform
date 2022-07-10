@@ -4,7 +4,7 @@ queue:
 
 job:
   client:
-    url: "http://localhost:8888"
+    url: "http://localhost:8888/castlemock/mock/rest/project/khw7r3/application/2h2dRS"
     path: "/firma"
 
 server.port: 9092
