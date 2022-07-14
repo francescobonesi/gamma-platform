@@ -321,6 +321,7 @@ The developed solution is an on-premise one, but adaptable to AWS (or generally 
 
 ## What is missing from the solution
 
+* unit tests (due to lack of time for adding them)
 * load balancer implementation
 * eventual service discovery service (like Eureka) for optimal scaling of API services
 * implementation of OAuth2 token verification (spring security OR custom filter)
