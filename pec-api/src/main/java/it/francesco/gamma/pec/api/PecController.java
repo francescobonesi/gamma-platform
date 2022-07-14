@@ -30,7 +30,7 @@ public class PecController {
         return ResponseEntity.ok(pecService.getPecList(serviceToken));
     }
 
-    @GetMapping("/message")
+    @GetMapping("/pec/message")
     public ResponseEntity<List<Message>> messageSearch(@RequestHeader("X-serviceToken") String serviceToken,
                                                        @RequestParam("pecId") String pecId) {
         return ResponseEntity.ok(pecService.getPecMessages(serviceToken, pecId));
