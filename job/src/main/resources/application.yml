@@ -29,3 +29,7 @@ hystrix:
       execution:
         isolation:
           strategy: SEMAPHORE
+
+logging:
+  file:
+    path: ./logs/

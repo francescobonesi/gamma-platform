@@ -29,3 +29,7 @@ queue:
   firma:
     requests: "firma-request"
     responses: "firma-response"
+
+logging:
+  file:
+    path: ./logs/

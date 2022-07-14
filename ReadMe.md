@@ -61,20 +61,6 @@ The solution is composed by
 
 ## User Journey
 
-```mermaid
-sequenceDiagram
-    participant Alice
-    participant Bob
-    Alice->>John: Hello John, how are you?
-    loop Healthcheck
-        John->>John: Fight against hypochondria
-    end
-    Note right of John: Rational thoughts <br/>prevail!
-    John-->>Alice: Great!
-    John->>Bob: How about you?
-    Bob-->>John: Jolly good!
-```
-
 
 From frontend (not developed here but hypothetically) the user can login following OAuth2 flow. Then it should also 
 connect to Firma, PEC and Conservazione services, getting the needed token for calling them.
@@ -84,6 +70,26 @@ User's token will be verified by load balancer and, if allowed, the request can 
 
 When pecs and filters have been selected, then /pec/message API will be called in order to get a list of messages.
 
+Here is the diagram for this:
+
+```mermaid
+sequenceDiagram
+    User->>LoadBalancer: /pec/*
+    LoadBalancer->>IdentityProvider: verifyToken
+        alt Gamma token not valid
+            IdentityProvider->>LoadBalancer: 403
+            LoadBalancer-->User: 403
+        else Gamma token valid
+            IdentityProvider->>LoadBalancer: 200
+            LoadBalancer->>PEC_MW: /pec/*
+            PEC_MW->>PEC: search pecs or messages 
+            PEC->>PEC: authorize request using token in body
+            PEC->>PEC_MW: return pecs or messages
+            PEC_MW->>LoadBalancer: 200
+            LoadBalancer-->User: 200
+        end
+```
+
 The user can select messages and associated attachments and can submit them to /request API.
 
 This api will only queue the request and return the identifier. First the message is queued in firma-request queue.
@@ -92,9 +98,70 @@ queue the message to conservazione-request queue.
 When the conservazione job will reply on conservazione-response then Firma & Conservazione service will
 update DB with correct status.
 
+Here is API request sequence diagram.
+
+```mermaid
+sequenceDiagram
+    User->>LoadBalancer: /request
+    LoadBalancer->>IdentityProvider: verifyToken
+        alt Gamma token not valid
+            IdentityProvider->>LoadBalancer: 403
+            LoadBalancer-->User: 403
+        else Gamma token valid
+            IdentityProvider->>LoadBalancer: 200
+            LoadBalancer->>API_MW: /request
+            API_MW->>API_MW: save on DB: FIRMA_IN_PROGRESS status
+            API_MW-->>FIRMA_JOB: async queuing of request for firma 
+            API_MW->>LoadBalancer: 200 w/identifier
+            LoadBalancer->>User: 200 w/ identifier
+        end
+```
+
+Event's sequence diagram:
+
+```mermaid
+sequenceDiagram
+  RABBITMQ-->>API_MW: consume message from queue
+  API_MW->>API_MW: check type of response received
+        alt got firma response
+            API_MW->>API_MW: save on DB: CONSERVAZIONE_IN_PROGRESS status
+            API_MW-->>CONSERVAZIONE_JOB: async queuing of request for conservazione
+          alt got conservazione response
+              API_MW->>API_MW: save on DB: COMPLETED status 
+          else failed firma or conservazione
+              API_MW->>API_MW: save on DB: FAILED status 
+          end
+          
+        end
+```
+
+
 The frontend can poll the identifier (/status/{identifier} api) in order to understand the status of the request.
 
-Moreover, it can show on screen live status of the request.
+Also, it can show on screen live status of the request.
+
+Here is the polling sequence diagram:
+
+```mermaid
+sequenceDiagram
+    User->>LoadBalancer: /status/{identifier}
+    LoadBalancer->>IdentityProvider: verifyToken
+        alt Gamma token not valid
+            IdentityProvider->>LoadBalancer: 403
+            LoadBalancer-->User: 403
+        else Gamma token valid
+            IdentityProvider->>LoadBalancer: 200
+            LoadBalancer->>API_MW: /status/{identifier}
+            API_MW->>API_MW: search on DB and retrieve status
+            alt elem not present in db
+            API_MW->>LoadBalancer: 404
+            LoadBalancer->>User: 404
+            else
+            API_MW->>LoadBalancer: 200 w/ request with status
+            LoadBalancer->>User: 200 w/ request with status
+            end
+        end
+```
 
 ## Prerequisites 
 
@@ -200,7 +267,7 @@ Pec API service will be exposed on 8080 port.
 Firma & Conservazione service will be exposed on 8081 port.
 
 
-## For cleaning at the end
+### For cleaning at the end
 
 When needed to clean all, stop docker containers of two services and also issue the command
 
@@ -210,11 +277,33 @@ make clean
 
 to clean and remove containers and network created by docker-compose.
 
+
+## Note on responsibility of component
+
+* load balancer: access and OAuth2 token check
+* PEC API service: integrate with PEC system 
+* Async API service: manage requests for firma and conservazione and keep track of status of requests
+* Firma Job: integrate with Firma system
+* Conservazione Job: integrate with Conservazione system
+
 ## Note on storage
 
 In MariaDB database, requested messages and responses status update will be stored.
 
 A relational db has been used but can be replaced by other types of database.
+
+## Note on ELK stack
+
+All microservices produce logs in console and in a separate file.
+
+The latter contains ELK compliant logs, using logback.
+
+## Note on scaling
+
+APIs and job are decoupled so that can be scaled independently.
+
+The two jobs are separated for the same reason. Firma and Conservazione can be very different operations 
+and also the scaling model can be different.
 
 ## What if we were in AWS world
 
@@ -228,6 +317,16 @@ The developed solution is an on-premise one, but adaptable to AWS (or generally 
 * Spring Boot job service: deployed as ECS service, because each job can take too much time 
   to be thought as Lambdas.
 * Eventual Static Frontend: deployed as hosted static website on AWS S3, with AWS Cloudfront on top if needed
+
+
+## What is missing from the solution
+
+* load balancer implementation
+* eventual service discovery service (like Eureka) for optimal scaling of API services
+* implementation of OAuth2 token verification (spring security OR custom filter)
+* pagination of pec and messages APIs (could be a very high number so pagination is needed)
+* adding of more filters on /pec/message api, now limited only by pec_id
+* error management of all cases
 
 
 ## Author

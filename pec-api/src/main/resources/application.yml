@@ -22,3 +22,7 @@ feign:
           - it.francesco.gamma.pec.feign.ClientRequestInterceptor
   hystrix:
     enabled: false
+
+logging:
+  file:
+    path: ./logs/
