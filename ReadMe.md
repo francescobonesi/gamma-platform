@@ -2,7 +2,7 @@
 
 ## Overview
 
-![architecture](./GammaAruba.png "MarineGEO logo")
+![architecture](./GammaAruba.png "architecture")
 
 
 The solution is composed by
@@ -58,6 +58,11 @@ The solution is composed by
 * Database: in this work, MariaDB has been used. This DB stores all requests issued with associated status.
   
   It is owned by Firma & Conservazione API service (single responsibility principle).
+
+## Oauth2 Flow (not implemented)
+
+![flow](./Oauth2Flow.png "flow")
+
 
 ## User Journey
 
